@@ -11,6 +11,9 @@
     <jbehave.core.version>3.7.4</jbehave.core.version>
     <jbehave.site.version>3.1.1</jbehave.site.version>
     <embeddables>**/*Stories.java</embeddables>
+    
+    <!-- Permite gerar o relatório Story Navigator -->
+    <jbehave.navigator.version>3.6.6</jbehave.navigator.version>
   </properties>
 
   <dependencies>
@@ -31,6 +34,13 @@
       <artifactId>jbehave-site-resources</artifactId>
       <version>${jbehave.site.version}</version>
       <type>zip</type>
+    </dependency>
+    
+    <!-- Permite gerar o relatório Story Navigator -->
+    <dependency>
+		<groupId>org.jbehave</groupId>
+		<artifactId>jbehave-navigator</artifactId>
+		<version>${jbehave.navigator.version}</version>
     </dependency>
   </dependencies>
 
@@ -74,6 +84,24 @@
               <goal>unpack-view-resources</goal>
             </goals>
           </execution>
+          
+          <!-- Permite gerar o relatório Story Navigator -->
+          <execution>
+            <id>unpack-navigator-resources</id>
+            <phase>process-resources</phase>
+            <configuration>
+            	<resourceArtifactIds>
+            		<param>jbehave-navigator</param>
+            	</resourceArtifactIds>
+				<resourceTypes>
+					<param>jar</param>
+				</resourceTypes>            	
+            </configuration>
+            <goals>
+              <goal>unpack-view-resources</goal>
+            </goals>            
+          </execution>          
+          
           <execution>
             <id>embeddable-stories</id>
             <phase>integration-test</phase>

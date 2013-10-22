@@ -2,7 +2,6 @@ package com.company.project;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Properties;
 
 import org.jbehave.core.Embeddable;
 import org.jbehave.core.configuration.Configuration;
@@ -13,13 +12,13 @@ import org.jbehave.core.io.LoadFromClasspath;
 import org.jbehave.core.io.StoryFinder;
 import org.jbehave.core.junit.JUnitStories;
 import org.jbehave.core.model.ExamplesTableFactory;
-import org.jbehave.core.parsers.RegexPrefixCapturingPatternParser;
 import org.jbehave.core.parsers.RegexStoryParser;
 import org.jbehave.core.reporters.CrossReference;
 import org.jbehave.core.reporters.StoryReporterBuilder;
 import org.jbehave.core.steps.InjectableStepsFactory;
 import org.jbehave.core.steps.InstanceStepsFactory;
 import org.jbehave.core.steps.ParameterConverters;
+import org.jbehave.core.steps.StepMonitor;
 import org.jbehave.core.steps.ParameterConverters.DateConverter;
 import org.jbehave.core.steps.ParameterConverters.ExamplesTableConverter;
 import com.company.project.steps.MySteps;
@@ -39,6 +38,9 @@ import static org.jbehave.core.reporters.Format.XML;
  * </p> 
  */
 public class MyStories extends JUnitStories {
+	
+	// CrossReference gera os dados utilizados pelo relatório StoryNavigator
+	private static final CrossReference xref = new CrossReference().withJsonOnly().withOutputAfterEachStory(true);
     
     public MyStories() {
         configuredEmbedder().embedderControls().doGenerateViewAfterStories(true).doIgnoreFailureInStories(true)
@@ -48,8 +50,11 @@ public class MyStories extends JUnitStories {
     @Override
     public Configuration configuration() {
         Class<? extends Embeddable> embeddableClass = this.getClass();
+        
+        StepMonitor stepMonitor = xref.getStepMonitor();
+        
         // Start from default ParameterConverters instance
-        ParameterConverters parameterConverters = new ParameterConverters();
+        ParameterConverters parameterConverters = new ParameterConverters(stepMonitor);
         // factory to allow parameter conversion and loading from external resources (used by StoryParser too)
         ExamplesTableFactory examplesTableFactory = new ExamplesTableFactory(new LocalizedKeywords(), new LoadFromClasspath(embeddableClass), parameterConverters);
         // add custom converters
@@ -61,8 +66,13 @@ public class MyStories extends JUnitStories {
             .useStoryReporterBuilder(new StoryReporterBuilder()
                 .withCodeLocation(CodeLocations.codeLocationFromClass(embeddableClass))
                 .withDefaultFormats()
-                .withFormats(CONSOLE, TXT, HTML, XML))
-            .useParameterConverters(parameterConverters);
+                .withFormats(CONSOLE, TXT, HTML, XML)
+                // CrossReference permite o uso do relatório Story Navigator
+                .withCrossReference(xref)
+                )
+             // Aplica parameterConverters/stepMonitor relacionados ao CrossReference
+            .useParameterConverters(parameterConverters)
+            .useStepMonitor(stepMonitor);
     }
 
     @Override

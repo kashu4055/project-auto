@@ -1,3 +1,5 @@
+Meta:
+@Report StoryNavigator
 
 Scenario: A scenario with some pending steps
 
