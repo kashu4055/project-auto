@@ -1,12 +1,9 @@
 Meta:
 @Report StoryNavigator
 
-Cenário: A scenario with some pending steps
+Cenário: Um cenário com alguns passos pendentes
 
-Dado que I am a pending step
-E I am still pending step
-Quando a good soul will implement me
-Então I shall be happy
-
-
-
+Dado que eu sou um passo pendente
+E eu ainda sou um passo pendente
+Quando uma boa alma me implementar
+Então eu ficarei reliz
