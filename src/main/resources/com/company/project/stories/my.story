@@ -1,12 +1,12 @@
 Meta:
 @Report StoryNavigator
 
-Scenario: A scenario with some pending steps
+Cenário: A scenario with some pending steps
 
-Given I am a pending step
-And I am still pending step
-When a good soul will implement me
-Then I shall be happy
+Dado que I am a pending step
+E I am still pending step
+Quando a good soul will implement me
+Então I shall be happy
 
 
 

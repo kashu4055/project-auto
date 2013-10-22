@@ -14,7 +14,8 @@
     
     <!-- Permite gerar o relatório Story Navigator -->
     <jbehave.navigator.version>3.6.6</jbehave.navigator.version>
-  </properties>
+ 	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+   </properties>
 
   <dependencies>
     <dependency>
