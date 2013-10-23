@@ -3,8 +3,6 @@ package com.company.project;
 import static org.jbehave.core.io.CodeLocations.codeLocationFromClass;
 import static org.jbehave.core.reporters.Format.CONSOLE;
 import static org.jbehave.core.reporters.Format.HTML;
-import static org.jbehave.core.reporters.Format.TXT;
-import static org.jbehave.core.reporters.Format.XML;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -31,6 +29,8 @@ import org.jbehave.core.steps.ParameterConverters.DateConverter;
 import org.jbehave.core.steps.ParameterConverters.ExamplesTableConverter;
 import org.jbehave.core.steps.StepMonitor;
 
+import com.company.project.steps.BingSteps;
+import com.company.project.steps.GoogleSteps;
 import com.company.project.steps.MySteps;
 
 /**
@@ -50,7 +50,7 @@ public class MyStories extends JUnitStories {
         configuredEmbedder().embedderControls().doGenerateViewAfterStories(true).doIgnoreFailureInStories(true)
                 .doIgnoreFailureInView(true).useThreads(2).useStoryTimeoutInSecs(60);
     }
-
+    
     @Override
     public Configuration configuration() {
         Class<? extends Embeddable> embeddableClass = this.getClass();
@@ -81,7 +81,7 @@ public class MyStories extends JUnitStories {
             .useStoryReporterBuilder(new StoryReporterBuilder()
                 .withCodeLocation(CodeLocations.codeLocationFromClass(embeddableClass))
                 .withDefaultFormats()
-                .withFormats(CONSOLE, TXT, HTML, XML)
+                .withFormats(CONSOLE, HTML)
                 // CrossReference permite o uso do relatório Story Navigator
                 .withCrossReference(xref)
                 // Permite ver relatório com palavras chaves de acordo com o locale informado
@@ -94,13 +94,12 @@ public class MyStories extends JUnitStories {
 
     @Override
     public InjectableStepsFactory stepsFactory() {
-        return new InstanceStepsFactory(configuration(), new MySteps());
+        return new InstanceStepsFactory(configuration(), new MySteps(), new BingSteps(), new GoogleSteps());
     }
 
     @Override
     protected List<String> storyPaths() {
         return new StoryFinder().findPaths(codeLocationFromClass(this.getClass()), "**/*.story", "**/excluded*.story");
-                
     }
-        
+
 }
