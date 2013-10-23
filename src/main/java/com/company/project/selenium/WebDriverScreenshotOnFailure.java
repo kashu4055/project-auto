@@ -6,10 +6,10 @@ import java.util.UUID;
 
 import org.jbehave.core.annotations.AfterScenario;
 import org.jbehave.core.annotations.AfterScenario.Outcome;
+import org.jbehave.core.annotations.ScenarioType;
 import org.jbehave.core.failures.PendingStepFound;
 import org.jbehave.core.failures.UUIDExceptionWrapper;
 import org.jbehave.core.reporters.StoryReporterBuilder;
-import org.jbehave.web.selenium.RemoteWebDriverProvider;
 
 /**
  * WebDriverSteps that save screenshot upon failure in a scenario outcome.
@@ -35,7 +35,16 @@ public class WebDriverScreenshotOnFailure extends WebDriverPage {
         this.screenshotPathPattern = screenshotPathPattern;
     }
 
-    @AfterScenario(uponOutcome = Outcome.FAILURE)
+    @AfterScenario(uponOutcome = Outcome.FAILURE, uponType = ScenarioType.NORMAL)
+    public void afterNormalScenarioFailure(UUIDExceptionWrapper uuidWrappedFailure) throws Exception {
+    	afterScenarioFailure(uuidWrappedFailure);
+    }
+    
+    @AfterScenario(uponOutcome = Outcome.FAILURE, uponType = ScenarioType.EXAMPLE)
+    public void afterExampleScenarioFailure(UUIDExceptionWrapper uuidWrappedFailure) throws Exception {
+    	afterScenarioFailure(uuidWrappedFailure);
+    }
+    
     public void afterScenarioFailure(UUIDExceptionWrapper uuidWrappedFailure) throws Exception {
         if (uuidWrappedFailure instanceof PendingStepFound) {
             return; // we don't take screen-shots for Pending Steps
@@ -46,25 +55,16 @@ public class WebDriverScreenshotOnFailure extends WebDriverPage {
             currentUrl = getWebDriver().getCurrentUrl();
         } catch (Exception e) {
         }
+        
         boolean savedIt = false;
         try {
-//            savedIt = driverProvider.saveScreenshotTo(screenshotPath);
             savedIt = saveScreenshotTo(screenshotPath);
-        } catch (RemoteWebDriverProvider.SauceLabsJobHasEnded e) {
-            System.err.println("Screenshot of page '" + currentUrl + "' has **NOT** been saved. The SauceLabs job has ended, possibly timing out on their end.");
-            return;
         } catch (Exception e) {
-            System.out.println("Screenshot of page '" + currentUrl + ". Will try again. Cause: " + e.getMessage());
-            // Try it again.  WebDriver (on SauceLabs at least?) has blank-page and zero length files issues.
-            try {
-//                savedIt = driverProvider.saveScreenshotTo(screenshotPath);
-                savedIt = saveScreenshotTo(screenshotPath);
-            } catch (Exception e1) {
-                System.err.println("Screenshot of page '" + currentUrl + "' has **NOT** been saved to '" + screenshotPath + "' because error '" + e.getMessage() + "' encountered. Stack trace follows:");
-                e.printStackTrace();
-                return;
-            }
+            System.err.println("Screenshot of page '" + currentUrl + "' has **NOT** been saved to '" + screenshotPath + "' because error '" + e.getMessage() + "' encountered. Stack trace follows:");
+            e.printStackTrace();
+            return;
         }
+        
         if (savedIt) {
             System.out.println("Screenshot of page '" + currentUrl + "' has been saved to '" + screenshotPath +"' with " + new File(screenshotPath).length() + " bytes");
         } else {

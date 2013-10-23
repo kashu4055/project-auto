@@ -1,10 +1,9 @@
 package com.company.project.selenium;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -22,26 +21,24 @@ public class WebDriverPage {
 	}
 
 	/**
-	 * Cópia do método DelegatingWebDriverProvider#saveScreenshotTo
+	 * Método adaptado de DelegatingWebDriverProvider#saveScreenshotTo
 	 * @param path
 	 * @return
 	 */
-    protected boolean saveScreenshotTo(String path) {
-        WebDriver driver = getWebDriver();
-        if (driver instanceof TakesScreenshot) {
-            File file = new File(path);
-            byte[] bytes = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
-            file.getParentFile().mkdirs();
-            try {
-                file.createNewFile();
-                IOUtils.write(bytes, new FileOutputStream(file));
-            } catch (IOException e) {
-                throw new RuntimeException("Can't save file", e);
-            }
-            return true;
-        }
-        return false;
-    }
+	protected boolean saveScreenshotTo(String path) {
+		WebDriver driver = getWebDriver();
+		if (driver instanceof TakesScreenshot) {
+			try {
+				File srcFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+				File destFile = new File(path);
+				FileUtils.copyFile(srcFile, destFile);
+			} catch (IOException e) {
+				throw new RuntimeException("Can't save file", e);
+			}
+			return true;
+		}
+		return false;
+	}
 	
 	protected WebDriver getWebDriver() {
 		return webDriverManager.getWebDriver();
