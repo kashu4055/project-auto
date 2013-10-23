@@ -2,7 +2,6 @@ package com.company.project;
 
 import static org.jbehave.core.io.CodeLocations.codeLocationFromClass;
 import static org.jbehave.core.reporters.Format.CONSOLE;
-import static org.jbehave.core.reporters.Format.HTML;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -28,7 +27,11 @@ import org.jbehave.core.steps.ParameterConverters;
 import org.jbehave.core.steps.ParameterConverters.DateConverter;
 import org.jbehave.core.steps.ParameterConverters.ExamplesTableConverter;
 import org.jbehave.core.steps.StepMonitor;
+import org.jbehave.web.selenium.WebDriverHtmlOutput;
 
+import com.company.project.pages.Pages;
+import com.company.project.selenium.WebDriverManager;
+import com.company.project.selenium.WebDriverScreenshotOnFailure;
 import com.company.project.steps.BingSteps;
 import com.company.project.steps.GoogleSteps;
 import com.company.project.steps.MySteps;
@@ -45,6 +48,9 @@ public class MyStories extends JUnitStories {
 	
 	// CrossReference gera os dados utilizados pelo relatório StoryNavigator
 	private static final CrossReference xref = new CrossReference().withJsonOnly().withOutputAfterEachStory(true);
+	
+	private WebDriverManager webDriverManager = new WebDriverManager();
+	private Pages pages = new Pages(webDriverManager);
     
     public MyStories() {
         configuredEmbedder().embedderControls().doGenerateViewAfterStories(true).doIgnoreFailureInStories(true)
@@ -81,7 +87,8 @@ public class MyStories extends JUnitStories {
             .useStoryReporterBuilder(new StoryReporterBuilder()
                 .withCodeLocation(CodeLocations.codeLocationFromClass(embeddableClass))
                 .withDefaultFormats()
-                .withFormats(CONSOLE, HTML)
+                //.withFormats(CONSOLE, HTML) // Para screenshots de erro utilizar WebDriverHtmlOutput.WEB_DRIVER_HTML
+                .withFormats(CONSOLE, WebDriverHtmlOutput.WEB_DRIVER_HTML)
                 // CrossReference permite o uso do relatório Story Navigator
                 .withCrossReference(xref)
                 // Permite ver relatório com palavras chaves de acordo com o locale informado
@@ -94,7 +101,16 @@ public class MyStories extends JUnitStories {
 
     @Override
     public InjectableStepsFactory stepsFactory() {
-        return new InstanceStepsFactory(configuration(), new MySteps(), new BingSteps(), new GoogleSteps());
+    	Configuration configuration = configuration();
+    	
+        return new InstanceStepsFactory(configuration, 
+        		webDriverManager, // Inicializa e fecha o browser
+        		new MySteps(), new BingSteps(pages), new GoogleSteps(pages),
+        		new WebDriverScreenshotOnFailure(webDriverManager, configuration.storyReporterBuilder())
+        		);
+        // Dica: Para gerar screenshots de erro você deve reimplementar a classe WebDriverScreenshotOnFailure passando webDriverManager e storyReporterBuilder como parâmetros.
+        // Obs.: Para visualizar os screenshots de erro você deve adicionar o formato WebDriverHtmlOutput.WEB_DRIVER_HTML ao StoryReporterBuilder
+        // Isto permite que no momento em que for tirado um screenshot de erro, seja recuperada a mesma instância do webdriver onde o erro ocorreu.
     }
 
     @Override

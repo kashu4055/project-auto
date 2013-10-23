@@ -4,17 +4,22 @@ import org.jbehave.core.annotations.Given;
 import org.jbehave.core.annotations.Named;
 import org.jbehave.core.annotations.When;
 
-public class BingSteps {
+import com.company.project.pages.Pages;
 
-    @Given("ao acessar o site do bing")
+public class BingSteps extends MyProjectSteps {
+
+    public BingSteps(Pages pages) {
+		super(pages);
+	}
+
+	@Given("ao acessar o site do bing")
     public void acessarPagina() {
-        // TODO Abrir a página utilizando selenium
+		getPages().getBingPage().acessarPagina();
     }
 
     @When("pesquisar no bing por $texto")
     public void pesquisar(@Named("texto") String texto) {
-    	// TODO Pesquisar texto no bing utilizando selenium
-       	System.out.println("bing thread " + Thread.currentThread().getId() + " - " + Thread.currentThread().getName() + " - texto: " + texto);
+       	getPages().getBingPage().pesquisar(texto);
     }
 
 }

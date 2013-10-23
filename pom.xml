@@ -9,12 +9,16 @@
 
   <properties>
     <jbehave.core.version>3.7.4</jbehave.core.version>
+	<jbehave.web.version>3.5.5</jbehave.web.version>
     <jbehave.site.version>3.1.1</jbehave.site.version>
     <embeddables>**/*Stories.java</embeddables>
     
     <!-- Permite gerar o relatório Story Navigator -->
-    <jbehave.navigator.version>3.6.6</jbehave.navigator.version>
- 	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	<jbehave.navigator.version>3.6.6</jbehave.navigator.version>
+	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+	<!-- Controla o número de threads disponível para o conjunto de histórias declarado por um embeddable -->
+	<threads>4</threads>
    </properties>
 
   <dependencies>
@@ -23,6 +27,11 @@
       <artifactId>jbehave-core</artifactId>
       <version>${jbehave.core.version}</version>
     </dependency>
+ 	<dependency>
+		<groupId>org.jbehave.web</groupId>
+		<artifactId>jbehave-web-selenium</artifactId>
+		<version>${jbehave.web.version}</version>
+	</dependency>
     <dependency>
       <groupId>org.jbehave</groupId>
       <artifactId>jbehave-core</artifactId>
@@ -96,7 +105,7 @@
             	</resourceArtifactIds>
 				<resourceTypes>
 					<param>jar</param>
-				</resourceTypes>            	
+				</resourceTypes>
             </configuration>
             <goals>
               <goal>unpack-view-resources</goal>
@@ -113,7 +122,7 @@
               <excludes />
               <ignoreFailureInStories>true</ignoreFailureInStories>
               <ignoreFailureInView>false</ignoreFailureInView>
-              <threads>1</threads>
+              <threads>${threads}</threads>
               <metaFilters>
                 <metaFilter></metaFilter>
               </metaFilters>
