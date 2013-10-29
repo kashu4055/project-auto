@@ -1,5 +1,6 @@
 Meta:
 @MotorPesquisa Google
+@Author Marcelo Tocchetto
 
 Cenário: Teste pesquisa google
 
