@@ -1,5 +1,6 @@
 Meta:
 @MotorPesquisa Bing
+@Author Marcelo Tocchetto
 
 Cenário: Teste pesquisa bing
 
