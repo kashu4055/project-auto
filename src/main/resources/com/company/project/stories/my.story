@@ -1,5 +1,6 @@
 Meta:
 @Report StoryNavigator
+@Author Marcelo Tocchetto
 
 Cenário: Um cenário com alguns passos pendentes
 
